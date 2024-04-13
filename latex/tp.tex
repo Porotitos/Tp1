@@ -1,0 +1,107 @@
+\documentclass[10pt,a4paper]{article}
+
+\input{AEDmacros}
+\usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
+
+
+\titulo{Trabajo práctico 1}
+\subtitulo{Especificación y WP}
+
+\fecha{21/4/2024}
+
+\materia{AED}
+\grupo{Grupo IATOGYSWWBKAFJVCRWKR}
+
+\integrante{Calo, Agustín}{390/23}{caloagustin4@gmail.com}
+\integrante{Seri, Rafael Nicolás}{362/23}{rafaelnicoseri@gmail.com}
+\integrante{Pintos Oliveira, Sol María Marcela}{428/23}{solpintosoliveira@gmail.com}
+\integrante{Páez Torrico, Santiago}{713/23}{santiagopaez122@gmail.com}
+% Pongan cuantos integrantes quieran
+
+% Declaramos donde van a estar las figuras
+% No es obligatorio, pero suele ser comodo
+\graphicspath{{../static/}}
+
+\begin{document}
+
+
+
+
+
+
+
+
+
+\maketitle
+\section{Especificación}
+
+
+
+\subsection{redistribucionDeLosFrutos}
+\begin{proc}{redistribucionDeLosFrutos}{\In recursos: \TLista{\float}, \In cooperan: \TLista{\bool}}{\TLista{\float}}
+	\requiere {|recursos| = |cooperan|}
+	\requiere {todosPositivos(recursos)}
+	\asegura{|res|=|recursos|}
+    \asegura{\paraTodo[unalinea]{i}{\ent}{\implicaLuego}}
+\end{proc}
+
+
+\subsection{trayectoriaDeLosFrutosIndividualesALargoPlazo}
+\begin{proc}{trayectoriaDeLosFrutosIndividualesALargoPlazo}{\Inout trayectorias: \TLista{\TLista{\float}}, \In cooperan: \TLista{\bool}, \In apuestas: \TLista{\TLista{\float}}, \In pagos: \TLista{\TLista{\float}}, \In eventos: \TLista{\TLista{\float}}} {}
+	\requiere {-}
+	\asegura{-}
+\end{proc}
+
+
+\subsection{trayectoriaExtrañaEscalera}
+\begin{proc}{trayectoriaExtrañaEscalera}{\In trayectorias: \TLista{\float}} {\bool}
+	\requiere {-}
+	\asegura{-}
+\end{proc}
+
+
+\subsection{individuoDecideSiCooperarONo}
+\begin{proc}{individuoDecideSiCooperarONo}{\In individuo: \nat, \In recursos: \TLista{\float}, \Inout cooperan: \TLista{\bool}, \In apuestas: \TLista{\TLista{\float}}, \In pagos: \TLista{\TLista{\float}}, \In eventos: \TLista{\TLista{\nat}}} {}
+	\requiere {-}
+	\asegura{-}
+\end{proc}
+
+
+\subsection{individuoActualizaApuesta}
+\begin{proc}{individuoActualizaApuesta}{\In individuo: \nat, \In recursos: \TLista{\float}, \In cooperan: \TLista{\bool}, \Inout apuestas: \TLista{\TLista{\bool}}, \In pagos: \TLista{\TLista{\float}}, \In eventos: \TLista{\TLista{\nat}}} {}
+	\requiere {-}
+	\asegura{-}
+\end{proc}
+
+
+
+
+
+
+
+\section{Demostraciones de correctitud}
+
+Demostrar que la siguiente especificación es correcta respecto de su implementación.
+
+La función \textbf{frutoDelTrabajoPuramenteIndividual} calcula, para el ejemplo de apuestas al juego de cara o seca, cuánto se ganaría si se juega completamente solo. Se contempla que el evento True es cuando sale cara.
+
+\begin{proc}{frutoDelTrabajoPuramenteIndividual}{\In recurso: \float, \In apuesta: \ensuremath{\langle s: \float, c: \float \rangle}, \In pago: \ensuremath{\langle s: \float, c: \float \rangle}, \In eventos: \TLista {\bool}, \Out res: \float } {}
+	\requiere {apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0}
+	\asegura{res = recurso(apuesta_c pago_c)^{\#apariciones(eventos,T)} (apuesta_s pago_s)^{\#apariciones(eventos,F )}}
+\end{proc}
+
+Donde \#apariciones(eventos, T) es el auxiliar utilizado en la teórica, y \#(eventos, T) es su abreviación.
+\begin{lstlisting}
+	res := recursos
+	i := 0
+	while (i < |eventos|) do
+		if eventos[i] then
+			res := (res * apuesta.c) * pago.c
+		else
+			res := (res * apuesta.s) * pago.s
+		endif
+		i := i + 1
+	endwhile
+	\end{lstlisting}
+
+\end{document}
