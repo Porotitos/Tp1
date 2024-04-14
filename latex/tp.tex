@@ -39,7 +39,7 @@
 	\requiere {|recursos| = |cooperan|}
 	\requiere {todosPositivos(recursos)}
 	\asegura{|res|=|recursos|}
-    \asegura{\paraTodo[unalinea]{i}{\ent}{0\geq i>|res| \implicaLuego if\ cooperan[i]\ then\ res[i] = totalARepartir(recursos, cooperan)\ else\ res[i] = recursos[i] + totalARepartir(recursos, cooperan)\ fi}}
+    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|res| \implicaLuego if\ cooperan[i]\ then\ res[i] = totalARepartir(recursos, cooperan)\ else\ res[i] = recursos[i] + totalARepartir(recursos, cooperan)\ fi}}
 \end{proc}
 
 \aux{totalARepartir}{recursos: \TLista{\float}, cooperan: \TLista{\bool}}{\float}{\\
@@ -55,10 +55,11 @@
 
 \subsection{trayectoriaExtrañaEscalera}
 \begin{proc}{trayectoriaExtrañaEscalera}{\In trayectorias: \TLista{\float}} {\bool}
-	\requiere {-}
-	\asegura{-}
+	\requiere {|trayectoria| > 0}
+	\asegura{res = True \iff }
 \end{proc}
 
+\pred{maximoLocal}{s: \TLista{\float}}{\existe[unalinea]{i}{\ent}{0<i<|s|-1 \yLuego (s[i]>s[i+1] \land s[i]>s[i-1])}}
 
 \subsection{individuoDecideSiCooperarONo}
 \begin{proc}{individuoDecideSiCooperarONo}{\In individuo: \nat, \In recursos: \TLista{\float}, \Inout cooperan: \TLista{\bool}, \In apuestas: \TLista{\TLista{\float}}, \In pagos: \TLista{\TLista{\float}}, \In eventos: \TLista{\TLista{\nat}}} {}
@@ -74,7 +75,7 @@
 \end{proc}
 
 \subsection*{Auxiliares y predicados globales}
-\pred{todosPositivos}{s: \TLista{\float}}{\paraTodo[unalinea]{i}{\ent}{0\geq i>|s| \implicaLuego s[i] > 0}}
+\pred{todosPositivos}{s: \TLista{\float}}{\paraTodo[unalinea]{i}{\ent}{0\leq i<|s| \implicaLuego s[i] > 0}}
 
 
 
