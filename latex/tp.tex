@@ -36,14 +36,14 @@
 \section{Especificación}
 \subsection{redistribucionDeLosFrutos}
 \begin{proc}{redistribucionDeLosFrutos}{\In recursos: \TLista{\float}, \In cooperan: \TLista{\bool}}{\TLista{\float}}
-	\requiere {|recursos| = |cooperan|}
+	\requiere {|recursos|=|cooperan|}
 	\requiere {todosPositivos(recursos)}
 	\asegura{|res|=|recursos|}
-    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|res| \implicaLuego if\ cooperan[i]\ then\ res[i] = totalARepartir(recursos, cooperan)\ else\ res[i] = recursos[i] + totalARepartir(recursos, cooperan)\ fi}}
+    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|res| \implicaLuego if\ cooperan[i]\ then\ res[i]=totalARepartir(recursos,cooperan)\ else\ res[i]=recursos[i]+totalARepartir(recursos,cooperan)\ fi}}
 \end{proc}
 
 \aux{totalARepartir}{recursos: \TLista{\float}, cooperan: \TLista{\bool}}{\float}{\\
-(\sum_{i = 0}^{|recursos| - 1}\ if\ cooperan[i]\ then\ recursos[i]\ else\ 0\ fi)\ /\ |recursos|}
+(\sum_{i=0}^{|recursos|-1}\ if\ cooperan[i]\ then\ recursos[i]\ else\ 0\ fi)\ /\ |recursos|}
 
 
 \subsection{trayectoriaDeLosFrutosIndividualesALargoPlazo}
@@ -55,8 +55,11 @@
 
 \subsection{trayectoriaExtrañaEscalera}
 \begin{proc}{trayectoriaExtrañaEscalera}{\In trayectorias: \TLista{\float}} {\bool}
-	\requiere {|trayectoria| > 0}
-	\asegura{res = True \iff }
+	\requiere {|trayectoria|>0}
+	\asegura{res=True \iff |trayectoria| = 1 \lor 
+    (trayectoria[0]>trayectoria[1] \land \neg maximoLocal(trayectoria) \land trayectoria[|trayectoria|-1]<trayectoria[|trayectoria|-2]) \lor
+    (trayectoria[|trayectoria|-1]>trayectoria[|trayectoria|-2] \land \neg maximoLocal(trayectoria) \land trayectoria[0]<trayectoria[1]) \lor
+    \existe[unalinea]{i}{\ent}{0<i<|trayectoria|-1 \yLuego (trayectoria[i]>trayectoria[i+1] \land trayectoria[i]>trayectoria[i-1]) \land \paraTodo[unalinea]{i}{\ent}{0<j<|trayectoria|-1 \yLuego (trayectoria[j]>trayectoria[j+1] \land trayectoria[j]>trayectoria[j-1]) \implicaLuego j=i}}}
 \end{proc}
 
 \pred{maximoLocal}{s: \TLista{\float}}{\existe[unalinea]{i}{\ent}{0<i<|s|-1 \yLuego (s[i]>s[i+1] \land s[i]>s[i-1])}}
@@ -75,7 +78,7 @@
 \end{proc}
 
 \subsection*{Auxiliares y predicados globales}
-\pred{todosPositivos}{s: \TLista{\float}}{\paraTodo[unalinea]{i}{\ent}{0\leq i<|s| \implicaLuego s[i] > 0}}
+\pred{todosPositivos}{s: \TLista{\float}}{\paraTodo[unalinea]{i}{\ent}{0\leq i<|s| \implicaLuego s[i]>0}}
 
 
 
