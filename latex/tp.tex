@@ -34,16 +34,16 @@
 
 \maketitle
 \section{Especificación}
-
-
-
 \subsection{redistribucionDeLosFrutos}
 \begin{proc}{redistribucionDeLosFrutos}{\In recursos: \TLista{\float}, \In cooperan: \TLista{\bool}}{\TLista{\float}}
 	\requiere {|recursos| = |cooperan|}
 	\requiere {todosPositivos(recursos)}
 	\asegura{|res|=|recursos|}
-    \asegura{\paraTodo[unalinea]{i}{\ent}{\implicaLuego}}
+    \asegura{\paraTodo[unalinea]{i}{\ent}{0\geq i>|res| \implicaLuego if\ cooperan[i]\ then\ res[i] = totalARepartir(recursos, cooperan)\ else\ res[i] = recursos[i] + totalARepartir(recursos, cooperan)\ fi}}
 \end{proc}
+
+\aux{totalARepartir}{recursos: \TLista{\float}, cooperan: \TLista{\bool}}{\float}{\\
+(\sum_{i = 0}^{|recursos| - 1}\ if\ cooperan[i]\ then\ recursos[i]\ else\ 0\ fi)\ /\ |recursos|}
 
 
 \subsection{trayectoriaDeLosFrutosIndividualesALargoPlazo}
@@ -73,6 +73,8 @@
 	\asegura{-}
 \end{proc}
 
+\subsection*{Auxiliares y predicados globales}
+\pred{todosPositivos}{s: \TLista{\float}}{\paraTodo[unalinea]{i}{\ent}{0\geq i>|s| \implicaLuego s[i] > 0}}
 
 
 
