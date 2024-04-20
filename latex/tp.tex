@@ -3,7 +3,6 @@
 \input{AEDmacros}
 \usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
 
-
 \titulo{Trabajo práctico 1}
 \subtitulo{Especificación y WP}
 
@@ -22,6 +21,7 @@
 % No es obligatorio, pero suele ser comodo
 \graphicspath{{../static/}}
 
+
 \begin{document}
 
 
@@ -33,24 +33,35 @@
 
 
 \maketitle
-\section{Especificación}
+\section{Especificación} 
 \subsection{redistribucionDeLosFrutos}
 \begin{proc}{redistribucionDeLosFrutos}{\In recursos: \TLista{\float}, \In cooperan: \TLista{\bool}}{\TLista{\float}}
 	\requiere {|recursos|=|cooperan|}
 	\requiere {todosPositivos(recursos)}
 	\asegura{|res|=|recursos|}
-    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|res| \implicaLuego if\ cooperan[i]\ then\ res[i]=totalARepartir(recursos,cooperan)\ else\ res[i]=recursos[i]+totalARepartir(recursos,cooperan)\ fi}}
+    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|res| \implicaLuego \IfThenElse{cooperan[i]}{res[i]=totalARepartir(recursos, cooperan)}{res[i]=recursos[i]+totalARepartir(recursos, cooperan)}}}
 \end{proc}
 
-\aux{totalARepartir}{recursos: \TLista{\float}, cooperan: \TLista{\bool}}{\float}{\\
-(\sum_{i=0}^{|recursos|-1}\ if\ cooperan[i]\ then\ recursos[i]\ else\ 0\ fi)\ /\ |recursos|}
+\aux{totalARepartir}{recursos: \TLista{\float}, cooperan: \TLista{\bool}}{\float}{\\ 
+(\sum_{i=0}^{|recursos|-1} \IfThenElse{cooperan[i]}{recursos[i]}{0}) / |recursos|}
 
 
 \subsection{trayectoriaDeLosFrutosIndividualesALargoPlazo}
 \begin{proc}{trayectoriaDeLosFrutosIndividualesALargoPlazo}{\Inout trayectorias: \TLista{\TLista{\float}}, \In cooperan: \TLista{\bool}, \In apuestas: \TLista{\TLista{\float}}, \In pagos: \TLista{\TLista{\float}}, \In eventos: \TLista{\TLista{\float}}} {}
-	\requiere {-}
-	\asegura{-}
+	\requiere{trayectorias=old(trayectorias)}
+	\requiere{|cooperan|=|pagos|=|apuestas|=|eventos|=|trayectorias|}
+	\requiere{\paraTodo[unalinea]{i}{\ent}{0\leq i<|pagos| \implicaLuego todosPositivos(pagos[i]) \land todosPositivos(apuestas[i])}}
+	\requiere{\paraTodo[unalinea]{i}{\ent}{0\leq i<|trayectoria| \implicaLuego trayectoria[i][0] > 0}}
+	\requiere{\paraTodo[unalinea]{j}{\ent}{-1<j<|apuestas| \implicaLuego \sum_{i=0}^{|eventos[j]|-1} apuestas[j][i]=1}}
+	\asegura{|trayectorias|=|old(trayectorias)|}
+	\asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|old(trayectorias)| \implicaLuego |trayectorias[i]|=|old(trayectorias)[i]|+|eventos[i]|}}
+	\asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|old(trayectorias)| \implicaLuego trayectorias[i][0] = old(trayectorias)[i][0]}}
+	\asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|old(trayectorias)| \implicaLuego \paraTodo[unalinea]{j}{\ent}{0\leq j<|eventos[i]| \implicaLuego trayectorias[i][j+1] = \IfThenElse{cooperan[i]}{distribucion(aporteIndividual(trayectorias, apuestas, pagos, eventos, cooperan, i, j))}{aporte$-$\\
+	Individual(trayectorias, apuestas, pagos, eventos, i, j) + distribucion(trayectorias, apuestas, pagos, eventos, cooperan,\\ j)}}}} 
 \end{proc}
+
+\aux{distribucion}{trayectorias: \TLista{\TLista{\float}}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, eventos: \TLista{\TLista{\nat}}, cooperan: \TLista{Bool}, m: \nat}{\float}{\\
+(\sum_{k=0}^{|cooperan|-1} \IfThenElse{cooperan[k]}{aporteIndividual(trayectorias,\ apuestas,\  pagos,\ eventos,\ k,\ m)}{0}) / |cooperan|}
 
 
 \subsection{trayectoriaExtrañaEscalera}
@@ -64,26 +75,50 @@
 
 \pred{maximoLocal}{s: \TLista{\float}}{\existe[unalinea]{i}{\ent}{0<i<|s|-1 \yLuego (s[i]>s[i+1] \land s[i]>s[i-1])}}
 
+
 \subsection{individuoDecideSiCooperarONo}
 \begin{proc}{individuoDecideSiCooperarONo}{\In individuo: \nat, \In recursos: \TLista{\float}, \Inout cooperan: \TLista{\bool}, \In apuestas: \TLista{\TLista{\float}}, \In pagos: \TLista{\TLista{\float}}, \In eventos: \TLista{\TLista{\nat}}} {}
-	\requiere {-}
-	\asegura{-}
+	\requiere{cooperan=old(cooperan)}
+   \requiere{|cooperan|=|recursos|=|apuestas|=|pagos|=|eventos|}
+   \requiere{\paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \implicaLuego todosPositivos(recursos) \land todosPositivos(apuestas[i]) \land \\ todosPositivos(pagos[i])}}
+   \requiere{0\leq individuo<|cooperan|}
+   \asegura{|cooperan|=|old(cooperan)|}
+   \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq individuo<|cooperan| \land i\neq individuo \implicaLuego cooperan[i]=old(cooperan)[i]}}
+   \asegura{\existe[unalinea]{s,p}{\TLista{\TLista{\float}}}{|s|=|p|=|cooperan| \land \paraTodo[unalinea]{n}{\ent}{0\leq n<|s| \yLuego |s[n]|= |p[n]|=(|eventos|+1) \land s[n][0]= p[n][0]=recursos[n] \land \paraTodo[unalinea]{k}{\ent}{0<k<|s[n]| \implicaLuego s[n][k]= (\IfThenElse{old(cooperan)[k] \lor k=individuo}{0}{\\aporteIndividual(s, apuestas, pagos, eventos, n, k)}) + distribucionCoop(s, apuestas, pagos, eventos, old(cooperan),\\ k, individuo) \land p[n][k]= (\IfThenElse{\neg(old(cooperan)[k]) \lor k=individuo}{aporteIndividual(p, apuestas, pagos, eventos,n, k)\\}{0}) + distribucionNoCoop(p, apuestas, pagos, eventos, old(cooperan), k, individuo)}} \yLuego cooperan[individuo]= p[individuo][|p[individuo]|-1] \leq s[individuo][|s[individuo]|-1]}}
 \end{proc}
 
+\aux{distribucionCoop}{trayectorias: \TLista{\TLista{\float}}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, eventos: \TLista{\TLista{\nat}}, cooperan: \TLista{\bool}, m: \nat, individuo: \nat}{\float}{\\(\sum_{k=0}^{|cooperan|-1} \IfThenElse{cooperan[k] \lor k=individuo}{aporteIndividual(trayectorias, apuestas,  pagos, eventos, k, m)\\}{0})/|cooperan|}
+\aux{distribucionNoCoop}{trayectorias: \TLista{\TLista{\float}}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, eventos: \TLista{\TLista{\nat}}, cooperan: \TLista{\bool}, m: \nat, individuo: \nat}{\float}{\\(\sum_{k=0}^{|cooperan|-1} \IfThenElse{cooperan[k] \land k \neq individuo}{aporteIndividual(trayectorias, apuestas,  pagos, eventos, k, m)\\}{0})/|cooperan|}
 
 \subsection{individuoActualizaApuesta}
 \begin{proc}{individuoActualizaApuesta}{\In individuo: \nat, \In recursos: \TLista{\float}, \In cooperan: \TLista{\bool}, \Inout apuestas: \TLista{\TLista{\bool}}, \In pagos: \TLista{\TLista{\float}}, \In eventos: \TLista{\TLista{\nat}}} {}
-	\requiere {-}
-	\asegura{-}
+	\requiere{apuestas = old(apuestas)}
+   \requiere{|cooperan|=|recursos|=|apuestas|=|pagos|=|eventos|}
+   \requiere{0\leq individuo <|cooperan|}
+   \asegura{|apuestas| = |old(apuestas)|}
+   \asegura{\paraTodo[unalinea]{i}{\ent}{-1<i<|apuestas| \implicaLuego |apuestas[i]| = |old(apuestas)[i]|}}
+   \asegura{\existe[unalinea]{p, s}{\TLista{\TLista{\float}})(\exists mejorApuesta : \TLista{\float})((\forall posibleApuesta : \TLista{\float}}{ultElem(p, recursos, old(apuestas),\\
+    pagos, cooperan, eventos, individuo, mejorApuesta) \geq ultElem(s, recursos, old(apuestas), pagos, cooperan, eventos,\\
+	individuo, posibleApuesta) \implicaLuego apuestas[individuo]=mejorApuesta)}}
+   
 \end{proc}
+
+\aux{ultElem}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{Bool}, eventos: \TLista{\nat}, individuo: \nat, posibleApuesta: \TLista{\nat}}{\float}{\\
+\IfThenElse{trayectoriaPosible(t, recursos, apuestas, pagos, cooperan, eventos, individuo, posibleApuesta)}{t[individuo][|t[individuo]|-1]}{-1}}
+
+\pred{trayectoriaPosible}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{Bool}, eventos: \TLista{\nat}, individuo: \nat, posibleApuesta: \TLista{\nat}}{|posibleApuesta| = |apuestas[individuo]| \land sumElem(posibleApuesta)=1 \land todosPositivos(posibleApuesta) |t|=|cooperan| \land \paraTodo[unalinea]{i}{\ent}{-1<i<|t| \yLuego |t[i]|=(|eventos|+1) \land t[i][0]=recursos[i] \land \paraTodo[unalinea]{j}{\ent}{0\leq j<|t[i]| \implicaLuego t[i][j+1] = (\IfThenElse{cooperan[i]}{0}{aporteIndDiferido(t[i], apuestas[i], pagos[i], eventos[i], i, j, individuo, posibleApuesta)})+ distribucionDiferida (t[i], apuestas[i], pagos[i], eventos[i], cooperan, i, j, individuo, posibleApuesta)}}}
+
+\aux{aporteIndDiferido}{trayectoria: \TLista{\float}, apuestas: \TLista{\float}, pagos: \TLista{\float}, eventos: \TLista{\nat}, k: \nat, m: \nat, individuo: \nat, apuestaInd: \TLista{\float}}{\float}{\\
+\IfThenElse{k=individuo}{trayectorias[m] \cdot apuestaInd[eventos[m]] \cdot pagos[eventos[m]]}{trayectorias[m] \cdot apuestas[eventos[m]] \cdot pagos[eventos[m]]}}
+
+\aux{distribucionDiferida}{trayectoria: \TLista{\float}, apuestas: \TLista{\float}, pagos: \TLista{\float}, eventos: \TLista{\nat}, cooperan: \TLista{Bool}, k: \nat, m: \nat, individuo: \nat, apuestaInd: \TLista{\float}}{\float}{\\
+(\sum_{k=0}^{|cooperan|-1} \IfThenElse{cooperan[k]}{aporteIndDiferido(trayectorias, apuestas,  pagos, eventos, k, m, individuo) }{0}) / |cooperan|}
+
+
 
 \subsection*{Auxiliares y predicados globales}
 \pred{todosPositivos}{s: \TLista{\float}}{\paraTodo[unalinea]{i}{\ent}{0\leq i<|s| \implicaLuego s[i]>0}}
-
-
-
-
-
+\aux{aporteIndividual}{trayectorias: \TLista{\TLista{\float}}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, eventos: \TLista{\TLista{\nat}}, k: \nat, m: \nat}{\float}{trayectorias[k][m] \cdot apuestas[k][eventos[k][m]] \cdot pagos[k][eventos[k][m]]}
 
 \section{Demostraciones de correctitud}
 
