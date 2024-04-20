@@ -102,7 +102,6 @@
 	individuo, posibleApuesta) \implicaLuego apuestas[individuo]=mejorApuesta)}}
    
 \end{proc}
-
 \aux{ultElem}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{Bool}, eventos: \TLista{\nat}, individuo: \nat, posibleApuesta: \TLista{\nat}}{\float}{\\
 \IfThenElse{trayectoriaPosible(t, recursos, apuestas, pagos, cooperan, eventos, individuo, posibleApuesta)}{t[individuo][|t[individuo]|-1]}{-1}}
 
@@ -119,6 +118,7 @@
 \subsection*{Auxiliares y predicados globales}
 \pred{todosPositivos}{s: \TLista{\float}}{\paraTodo[unalinea]{i}{\ent}{0\leq i<|s| \implicaLuego s[i]>0}}
 \aux{aporteIndividual}{trayectorias: \TLista{\TLista{\float}}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, eventos: \TLista{\TLista{\nat}}, k: \nat, m: \nat}{\float}{trayectorias[k][m] \cdot apuestas[k][eventos[k][m]] \cdot pagos[k][eventos[k][m]]}
+\aux{sumElem}{s: \TLista{\float}}{\float}{\\ \sum_{i = 0}^{|s| - 1} s[i]}
 
 \section{Demostraciones de correctitud}
 
