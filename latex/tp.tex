@@ -2,7 +2,7 @@
 
 \input{AEDmacros}
 \usepackage{caratula} % Version modificada para usar las macros de algo1 de ~> https://github.com/bcardiff/dc-tex
-
+\usepackage{amssymb}
 \titulo{Trabajo práctico 1}
 \subtitulo{Especificación y WP}
 
@@ -133,7 +133,7 @@ La función \textbf{frutoDelTrabajoPuramenteIndividual} calcula, para el ejemplo
 
 Donde \#apariciones(eventos, T) es el auxiliar utilizado en la teórica, y \#(eventos, T) es su abreviación.
 \begin{lstlisting}
-	res := recursos
+	res := recurso
 	i := 0
 	while (i < |eventos|) do
 		if eventos[i] then
@@ -144,5 +144,69 @@ Donde \#apariciones(eventos, T) es el auxiliar utilizado en la teórica, y \#(ev
 		i := i + 1
 	endwhile
 	\end{lstlisting}
-
+Decimos que un programa $S$ es correcto respecto de una especificación dada por una precondición $P$ y una postcondición $Q$, si siempre que el programa comienza en un estado que cumple $P$, el programa termina su ejecución, y en el estado final se cumple $Q$. Se denota con la siguiente tripla de Hoare: \\
+\begin{center}
+	$\{P\} S \{Q\}$
+\end{center}
+Como el programa que nos dan cuenta con ciclos, tenemos que probar que $\{Pre\}S1;while...;S3\{Post\}$ es válida, para ello tenemos que cumplir:
+\begin{enumerate}
+	\item $Pre \implicaLuego wp(S1, P_c)$
+	\item $P_c \implicaLuego wp(while..., Q_c)$
+	\item $Q_c \implicaLuego wp(S3, Post)$
+\end{enumerate}
+Por monotonía, esto nos permite demostrar que $Pre \implicaLuego wp(S1;while...;S3, Post)$ es verdadera. \\
+Vamos a demostrar 1 y 2, para ello proponemos lo siguiente:
+\begin{itemize}
+	\item $P_c \equiv \{i = 0 \land res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0\}$
+	\item $Q_c \equiv \{res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$
+	\item $I \equiv \{0 \leq i \leq |eventos| \land res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$
+	\item $fv \equiv \{|eventos|-i \}$
+	\item $B \equiv \{i < |eventos|\}$
+\end{itemize}
+\subsubsection*{Equivalencias entre $Q_c$ propuesto y $asegura$ dado:}
+\begin{minipage}[t]{18cm}
+	$asegura: res = recurso * (apuesta_c * pago_c)^{\#apariciones(eventos,T)} (apuesta_s * pago_s)^{\#apariciones(eventos,F )} \equiv recurso*(apuesta_c * pago_c)^{\sum_{i=0}^{|eventos| - 1} \IfThenElse{eventos[i] = T}{1}{0}}*(apuesta_s * pago_s)^{\sum_{i=0}^{|eventos| - 1} \IfThenElse{eventos[i] = F}{1}{0}}$ \\
+	Por propiedad de potenciación: $x^{f(n)+f(m)} = x^{f(n)}*x^{f(m)}$ luego $x^{\sum_{i=0}^{n}f(i)} = \prod_{i = 0}^{n}x^{f(i)}$ \\
+	$\equiv recurso * \prod_{j=0}^{|eventos|-1} \IfThenElse{eventos[j] = T}{(apuesta_c * pago_c)}{1} * \prod_{j=0}^{|eventos|-1} \IfThenElse{eventos[j] = F}{(apuesta_s * pago_s)}{1}$ \\
+	Si $A={0\leq j<|eventos|-1: eventos[j]=T}$ y $B={0\leq j<|eventos|-1: eventos[j]=F}$ tengo que $A \cap B= \varnothing$ y como en las productorias el predicado del else es 1 (neutro multiplicativo), vale que si las juntamos queda: \\
+	$asegura: res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta_c *pago_c}{apuesta_s * pago_s}\ \square$
+\end{minipage}
+\subsection*{Demostración $Pre \implicaLuego wp(S1, P_c)$}
+\begin{minipage}[t]{18cm}
+	Vamos a utilizar los axiomas 1 (asignación) y 2 (composicional) vistos en la teórica. \\
+1. $Pre \implicaLuego wp(res:=recurso; i:=0, P_c) \stackrel{Axioma\ 2}{\equiv} wp(res:=recurso; wp(i:=0, P_c))$ \\
+2. $wp(i:=0, \{i = 0 \land res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0\}) \stackrel{Axioma\ 1}{\equiv} def(0) \yLuego 0 = 0 \land res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0 \equiv res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0 \equiv E_1$ \\
+3. $wp(res:=recurso, E_1) \stackrel{Axioma\ 1}{\equiv} def(recurso) \yLuego recurso = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0 \equiv apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0 \equiv E_2$ \\
+Y como $Pre \equiv E_2$ tenemos que $Pre \implica E_2\ \square$
+\end{minipage}
+\subsection*{Demostración $P_c \implicaLuego wp(while..., Q_c)$}
+\begin{minipage}[t]{18cm}
+Por Teorema del Invariante, vamos a mostrar que la tripla de Hoare:
+\begin{center}
+	$\{P_c\} while...\{Q_c\}$
+\end{center}
+es válida. Entonces tenemos siguiente:
+\begin{enumerate}
+	\item $P_c \implies I$
+	\item $\{I\land B\}S\{I\}$
+	\item $I \land \neg B \implies Q_c$
+	\item $\{I\land v_{0}=fv\}S\{fv<v_{0}\}$
+	\item $I\land fv \leq 0 \implies \neg B$
+\end{enumerate}
+Vamos a demostrar cada una de ellas.
+\subsubsection*{Demostración para $P_c \implies I$:}
+$P_c \equiv \{i = 0 \land res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0\}$ \\
+$I \equiv \{ 0 \leq i \leq |eventos| \land res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$ \\
+Queremos probar que vale el invariante:
+\begin{itemize}
+	\item $0 \leq i \leq |eventos|$ \\ Vale, porque $i = 0$ y trivialmente sabemos que se encuentra entre 0 y la longitud de la secuencia.
+	\item $res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}$ \\ Tenemos que $i = 0$ y $res = recurso$ entonces, como $i = 0$ \\ 
+	$res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s} = recurso * \prod_{j = 0}^{0 - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s} = recurso * \prod_{j = 0}^{-1}$, que es un rango vacío, es decir, valdrá 1 y teníamos en $P_c$ que $res = recurso$ entonces, $recurso = recurso * 1 = recurso$
+\end{itemize}
+Y con esto se demuestra que $P_c \implies I$
+\subsubsection*{Demostración para $I \land \neg B \implies Q_c$}
+$I \equiv \{0 \leq i \leq |eventos| \land res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$ \\
+$B \equiv \{i < |eventos|\}$ \\
+$Q_c \equiv \{res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$
+\end{minipage}
 \end{document}
