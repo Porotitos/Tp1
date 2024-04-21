@@ -152,7 +152,7 @@ Como el programa que nos dan cuenta con ciclos, tenemos que probar que $\{Pre\}S
 \begin{enumerate}
 	\item $Pre \implicaLuego wp(S1, P_c)$
 	\item $P_c \implicaLuego wp(while..., Q_c)$
-	\item $Q_c \implicaLuego wp(S3, Post)$
+	\item $Q_c \implicaLuego Post$
 \end{enumerate}
 Por monotonía, esto nos permite demostrar que $Pre \implicaLuego wp(S1;while...;S3, Post)$ es verdadera. \\
 Vamos a demostrarlas, para ello proponemos lo siguiente:
@@ -233,23 +233,21 @@ $res  = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta.
 Luego $I \land \neg B \implies Q_c\ \blacksquare$
 \subsubsection*{Demostración $\{I\land v_{0}=fv\}S\{fv<v_{0}\}$}
 \noindent $\{I \land B \land v_0 = |eventos| - i \}S\{|eventos|-i<v_0\}$ \\
-Vemos si $I \land B \land v_0 = |eventos| - i \implies wp(if...; i:=i+1, |eventos|-1 < v_0)$ \\
-$I \land B \land v_0 = |eventos| - i \implies wp(if...; i:=i+1, |eventos|-1 < v_0)$ \\
+Vemos si $I \land B \land v_0 = |eventos| - i \implies wp(if...; i:=i+1, |eventos|-i < v_0)$ \\
+$I \land B \land v_0 = |eventos| - i \implies wp(if...; i:=i+1, |eventos|-i< v_0)$ \\
 $wp(i:=i+1, |eventos|-i<v_0) \equiv def(i+1) \land |eventos|-i-1<v_0 \equiv |eventos|-i<v_0+1$ \\
 $wp(if..., |eventos|-i<v_0+1) \equiv def(eventos[i]) \land ((eventos[i] \land wp(res:=res*apuesta.c*pago.c, |eventos|-i<v_0+1)) \lor (\neg eventos[i] \land wp(res:=res*apuesta.s*pago.s, |eventos|-i<v_0+1))) \equiv ((eventos[i] \land |eventos|-i<v_0+1) \lor (\neg eventos[i] \land |eventos|-i<v_0+1))$ \\
 Aplicamos $(P \land Q) \lor (\neg P \land Q) \equiv Q$ \\
 Vemos si vale la implicación \\
-$I \land i < |eventos| \land |eventos| - i = v_0 \implies |eventos| - i < v_0 + 1$, porque $A = B \implica A < B + 1$ \\
+$I \land i < |eventos| \land |eventos| - i = v_0 \implies |eventos| - i < v_0 + 1$, porque $A = B \implies A < B + 1$ \\
 Entonces $\{I\land v_{0}=fv\}S\{fv<v_{0}\}\ \blacksquare$
 \subsubsection*{Demostración $I\land fv \leq 0 \implies \neg B$}
 \noindent Por la definición de $fv$ tenemos:
 \begin{itemize}
 	\item $I \land |eventos| - i \leq 0$ \\
-	si sumamos $i$ de ambos lados de la igualdad, \\$I \land |eventos| - i + i\leq 0 + i \equiv I \land |eventos| \leq i \equiv (\neg B \equiv |eventos| \leq i)$
+	si sumamos $i$ de ambos lados de la igualdad, \\$I \land |eventos| - i + i\leq 0 + i \equiv I \land |eventos| \leq i$
 \end{itemize}
-Luego $I \land \neg B \implies \neg B\ \blacksquare$
-\subsection*{Demostración $Q_c \implicaLuego wp(S3, Post)$}
-\noindent Calculamos la wp \\
-$wp(skip, Post) \equiv wp(skip, res = recurso * (apuesta_c * pago_c)^{\#apariciones(eventos,T)} (apuesta_s * pago_s)^{\#apariciones(eventos,F )}) \equiv res = recurso * (apuesta_c * pago_c)^{\#apariciones(eventos,T)} (apuesta_s * pago_s)^{\#apariciones(eventos,F )} \equiv Q_c$ \\
-Así tenemos que $Q_c \implicaLuego wp(S3, Post)\ \blacksquare $
+Como $|eventos| \leq i \equiv \neg B$ es una implicación del tipo $P \land Q \implies P$, tenemos $I \land \neg B \implies \neg B\ \blacksquare$
+\subsection*{Demostración $Q_c \implicaLuego Post = asegura \equiv Q_c $}
+\noindent Como la implementación termina con el ciclo y el $Q_c$ equivale al asegura (como lo hemos demostrado anteriormente), decimos que la especificación es correcta respecto a su implementación. $\blacksquare$
 \end{document}
