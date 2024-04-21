@@ -168,7 +168,7 @@ Vamos a demostrar 1 y 2, para ello proponemos lo siguiente:
 	$asegura: res = recurso * (apuesta_c * pago_c)^{\#apariciones(eventos,T)} (apuesta_s * pago_s)^{\#apariciones(eventos,F )} \equiv recurso*(apuesta_c * pago_c)^{\sum_{i=0}^{|eventos| - 1} \IfThenElse{eventos[i] = T}{1}{0}}*(apuesta_s * pago_s)^{\sum_{i=0}^{|eventos| - 1} \IfThenElse{eventos[i] = F}{1}{0}}$ \\
 	Por propiedad de potenciación: $x^{f(n)+f(m)} = x^{f(n)}*x^{f(m)}$ luego $x^{\sum_{i=0}^{n}f(i)} = \prod_{i = 0}^{n}x^{f(i)}$ \\
 	$\equiv recurso * \prod_{j=0}^{|eventos|-1} \IfThenElse{eventos[j] = T}{(apuesta_c * pago_c)}{1} * \prod_{j=0}^{|eventos|-1} \IfThenElse{eventos[j] = F}{(apuesta_s * pago_s)}{1}$ \\
-	Si $A={0\leq j<|eventos|-1: eventos[j]=T}$ y $B={0\leq j<|eventos|-1: eventos[j]=F}$ tengo que $A \cap B= \varnothing$ y como en las productorias el predicado del else es 1 (neutro multiplicativo), vale que si las juntamos queda: \\
+	Si $A=\{0\leq j<|eventos|-1: eventos[j]=T\}$ y $B=\{0\leq j<|eventos|-1: eventos[j]=F\}$ tengo que $A \cap B= \varnothing$ y como en las productorias el predicado del else es 1 (neutro multiplicativo), vale que si las juntamos queda: \\
 	$asegura: res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta_c *pago_c}{apuesta_s * pago_s}\ \square$
 \end{minipage}
 \subsection*{Demostración $Pre \implicaLuego wp(S1, P_c)$}
