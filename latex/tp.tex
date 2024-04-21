@@ -164,6 +164,7 @@ Vamos a demostrarlas, para ello proponemos lo siguiente:
 	\item $B \equiv \{i < |eventos|\}$
 \end{itemize}
 \subsubsection*{Equivalencias entre $Q_c$ propuesto y $asegura$ dado:}
+\noindent
 \begin{minipage}[t]{18cm}
 	$asegura: res = recurso * (apuesta_c * pago_c)^{\#apariciones(eventos,T)} (apuesta_s * pago_s)^{\#apariciones(eventos,F )} \equiv recurso*(apuesta_c * pago_c)^{\sum_{i=0}^{|eventos| - 1} \IfThenElse{eventos[i] = T}{1}{0}}*(apuesta_s * pago_s)^{\sum_{i=0}^{|eventos| - 1} \IfThenElse{eventos[i] = F}{1}{0}}$ \\
 	Por propiedad de potenciación: $x^{f(n)+f(m)} = x^{f(n)}*x^{f(m)}$ luego $x^{\sum_{i=0}^{n}f(i)} = \prod_{i = 0}^{n}x^{f(i)}$ \\
@@ -172,6 +173,7 @@ Vamos a demostrarlas, para ello proponemos lo siguiente:
 	$asegura: res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta_c *pago_c}{apuesta_s * pago_s}\ \blacksquare$
 \end{minipage}
 \subsection*{Demostración $Pre \implicaLuego wp(S1, P_c)$}
+\noindent
 \begin{minipage}[t]{18cm}
 	Vamos a utilizar los axiomas 1 (asignación) y 2 (composicional) vistos en la teórica. \\
 1. $Pre \implicaLuego wp(res:=recurso; i:=0, P_c) \stackrel{Axioma\ 2}{\equiv} wp(res:=recurso; wp(i:=0, P_c))$ \\
@@ -180,8 +182,7 @@ Vamos a demostrarlas, para ello proponemos lo siguiente:
 Y como $Pre \equiv E_2$ tenemos que $Pre \implica E_2\ \blacksquare$
 \end{minipage}
 \subsection*{Demostración $P_c \implicaLuego wp(while..., Q_c)$}
-\begin{minipage}[t]{18cm}
-Por Teorema del Invariante, vamos a mostrar que la tripla de Hoare:
+\noindent Por Teorema del Invariante, vamos a mostrar que la tripla de Hoare:
 \begin{center}
 	$\{P_c\} while...\{Q_c\}$
 \end{center}
@@ -194,17 +195,17 @@ es válida. Entonces tenemos siguiente:
 	\item $I\land fv \leq 0 \implies \neg B$
 \end{enumerate}
 \subsubsection*{Demostración $P_c \implies I$:}
-$P_c \equiv \{i = 0 \land res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0\}$ \\
+\noindent $P_c \equiv \{i = 0 \land res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0\}$ \\
 $I \equiv \{ 0 \leq i \leq |eventos| \land res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$ \\
 Queremos probar que vale $I$:
 \begin{itemize}
 	\item $0 \leq i \leq |eventos|$ \\ vale, porque $i = 0$ y trivialmente sabemos que se encuentra entre 0 y la longitud de la secuencia eventos.
 	\item $res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}$ \\ tenemos que $i = 0$ y $res = recurso$ entonces, como $i = 0$ \\ 
-	$res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s} = recurso * \prod_{j = 0}^{0 - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s} = recurso * \prod_{j = 0}^{-1}$, que es un rango vacío, es decir, valdrá 1 y teníamos en $P_c$ que $res = recurso$ entonces, $recurso = recurso * 1 = recurso$
+	$res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s} = \\ recurso * \prod_{j = 0}^{0 - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s} = recurso * \prod_{j = 0}^{-1}$, que es un rango vacío, es decir, valdrá 1 y teníamos en $P_c$ que $res = recurso$ entonces, $recurso = recurso * 1 = recurso$
 \end{itemize}
 Tenemos entonces que $P_c \implies I\ \blacksquare$
 \subsubsection*{Demostración $\{I\land B\}S\{I\}$}
-$B \equiv \{i < |eventos|\}$ \\
+\noindent $B \equiv \{i < |eventos|\}$ \\
 $I \equiv \{0 \leq i \leq |eventos| \land res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$ \\
 Vemos si $I \land B \implies wp(if...; i:= i + 1, I)$
 \begin{itemize}
@@ -212,18 +213,15 @@ Vemos si $I \land B \implies wp(if...; i:= i + 1, I)$
 	\item $wp(if..., E_3) \equiv def(eventos[i]) \yLuego((eventos[i] \land wp(res := (res * apuesta.c) * pago.c, E_3) \lor (\neg eventos[i] \land wp(res := (res * apuesta.s) * pago.s, E_3)))) \equiv $ \\
 	$((eventos[i] \land (res * apuesta.c) * pago.c = recurso * \prod_{j = 0}^{i} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}) \lor (\neg eventos[i] \land (res * apuesta.s) * pago.s = recurso * \prod_{j = 0}^{i} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s})) \equiv ((eventos[i] \land res = \frac{1}{apuesta.c * pago.c} * recurso * \prod_{j = 0}^{i} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}) \lor (\neg eventos[i] \land res = \frac{1}{apuesta.s * pago.s} * recurso * \prod_{j = 0}^{i} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}))$ \\
 	Necesitamos llevar esto a algo similar al invariante, nos damos cuenta que $\frac{1}{apuesta.c * pago.c}$ y $\frac{1}{apuesta.s * pago.s}$ son equivalentes a $\frac{1}{\IfThenElse{eventos[i]}{apuesta.c *pago.c}{apuesta.s * pago.s}}$ respectivamente, entonces reescribimos los términos:
-	\item $0 \leq i + 1 \leq |eventos| \yLuego ((eventos[i] \land res = \frac{1}{\IfThenElse{eventos[i]}{apuesta.c *pago.c}{apuesta.s * pago.s}} * recurso * \prod_{j = 0}^{i} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}) \lor (\neg eventos[i] \land res = \frac{1}{\IfThenElse{eventos[i]}{apuesta.c *pago.c}{apuesta.s * pago.s}} * recurso * \prod_{j = 0}^{i} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s})) \equiv 0 \leq i + 1 \leq |eventos| \yLuego ((eventos[i] \land res = recurso * \prod_{j = 0}^{i-1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}) \lor (\neg eventos[i] \land res = recurso * \prod_{j = 0}^{i-1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}))$
-	\\ Aplico $(P \land Q) \lor (\neg P \land Q) \equiv Q$
+	\item $0 \leq i + 1 \leq |eventos| \yLuego ((eventos[i] \land res = \\ \frac{1}{\IfThenElse{eventos[i]}{apuesta.c *pago.c}{apuesta.s * pago.s}} * recurso * \prod_{j = 0}^{i} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}) \lor (\neg eventos[i] \land res = \frac{1}{\IfThenElse{eventos[i]}{apuesta.c *pago.c}{apuesta.s * pago.s}} * recurso * \prod_{j = 0}^{i} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s})) \equiv 0 \leq i + 1 \leq |eventos| \yLuego ((eventos[i] \land res = recurso * \prod_{j = 0}^{i-1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}) \lor (\neg eventos[i] \land res = recurso * \prod_{j = 0}^{i-1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}))$
+	\\ Aplicamos $(P \land Q) \lor (\neg P \land Q) \equiv Q$
 	\item  $0 \leq i + 1 \leq |eventos| \yLuego res = recurso * \prod_{j = 0}^{i-1}\IfThenElse{eventos[i]}{apuesta.c*pago.c}{apuesta.s*pago.s} \equiv E_4$
 	\\ Chequeamos si $I \land B \implies E_4$
-	\item $i \leq i + 1 \leq |eventos|$ \\
-	el invariante afirma que $0 \leq i \leq |eventos|$ y la guarda afirma que $i < |eventos|$
-	\item $res = recurso * \prod_{j = 0}^{i-1}\IfThenElse{eventos[i]}{apuesta.c*pago.c}{apuesta.s*pago.s}$ \\
-	que lo afirma el invariante
+	\item $i \leq i + 1 \leq |eventos|$, el invariante afirma que $0 \leq i \leq |eventos|$ y la guarda afirma que $i < |eventos|$
+	\item $res = recurso * \prod_{j = 0}^{i-1}\IfThenElse{eventos[i]}{apuesta.c*pago.c}{apuesta.s*pago.s}$, que lo afirma el invariante. \\ Entonces $\{I\land B\}S\{I\}\ \blacksquare$
 \end{itemize}
-Entonces $\{I\land B\}S\{I\}$
 \subsubsection*{Demostración $I \land \neg B \implies Q_c$}
-$I \equiv \{0 \leq i \leq |eventos| \land res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$ \\
+\noindent $I \equiv \{0 \leq i \leq |eventos| \land res = recurso * \prod_{j = 0}^{i - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$ \\
 $\neg B \equiv \{i \geq |eventos|\}$ \\
 $Q_c \equiv \{res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}\}$ \\
 Queremos probar que vale $Q_c$: \\
@@ -233,13 +231,25 @@ $res  = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta.
 	$res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta.c *pago.c}{apuesta.s * pago.s}$
 \end{itemize}
 Luego $I \land \neg B \implies Q_c\ \blacksquare$
+\subsubsection*{Demostración $\{I\land v_{0}=fv\}S\{fv<v_{0}\}$}
+\noindent $\{I \land B \land v_0 = |eventos| - i \}S\{|eventos|-i<v_0\}$ \\
+Vemos si $I \land B \land v_0 = |eventos| - i \implies wp(if...; i:=i+1, |eventos|-1 < v_0)$ \\
+$I \land B \land v_0 = |eventos| - i \implies wp(if...; i:=i+1, |eventos|-1 < v_0)$ \\
+$wp(i:=i+1, |eventos|-i<v_0) \equiv def(i+1) \land |eventos|-i-1<v_0 \equiv |eventos|-i<v_0+1$ \\
+$wp(if..., |eventos|-i<v_0+1) \equiv def(eventos[i]) \land ((eventos[i] \land wp(res:=res*apuesta.c*pago.c, |eventos|-i<v_0+1)) \lor (\neg eventos[i] \land wp(res:=res*apuesta.s*pago.s, |eventos|-i<v_0+1))) \equiv ((eventos[i] \land |eventos|-i<v_0+1) \lor (\neg eventos[i] \land |eventos|-i<v_0+1))$ \\
+Aplicamos $(P \land Q) \lor (\neg P \land Q) \equiv Q$ \\
+Vemos si vale la implicación \\
+$I \land i < |eventos| \land |eventos| - i = v_0 \implies |eventos| - i < v_0 + 1$, porque $A = B \implica A < B + 1$ \\
+Entonces $\{I\land v_{0}=fv\}S\{fv<v_{0}\}\ \blacksquare$
 \subsubsection*{Demostración $I\land fv \leq 0 \implies \neg B$}
-Por la definición de $fv$ tenemos:
+\noindent Por la definición de $fv$ tenemos:
 \begin{itemize}
 	\item $I \land |eventos| - i \leq 0$ \\
 	si sumamos $i$ de ambos lados de la igualdad, \\$I \land |eventos| - i + i\leq 0 + i \equiv I \land |eventos| \leq i \equiv (\neg B \equiv |eventos| \leq i)$
 \end{itemize}
 Luego $I \land \neg B \implies \neg B\ \blacksquare$
-\end{minipage}
-
+\subsection*{Demostración $Q_c \implicaLuego wp(S3, Post)$}
+\noindent Calculamos la wp \\
+$wp(skip, Post) \equiv wp(skip, res = recurso * (apuesta_c * pago_c)^{\#apariciones(eventos,T)} (apuesta_s * pago_s)^{\#apariciones(eventos,F )}) \equiv res = recurso * (apuesta_c * pago_c)^{\#apariciones(eventos,T)} (apuesta_s * pago_s)^{\#apariciones(eventos,F )} \equiv Q_c$ \\
+Así tenemos que $Q_c \implicaLuego wp(S3, Post)\ \blacksquare $
 \end{document}
