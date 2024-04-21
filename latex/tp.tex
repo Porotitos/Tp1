@@ -169,7 +169,7 @@ Vamos a demostrar 1 y 2, para ello proponemos lo siguiente:
 	Por propiedad de potenciación: $x^{f(n)+f(m)} = x^{f(n)}*x^{f(m)}$ luego $x^{\sum_{i=0}^{n}f(i)} = \prod_{i = 0}^{n}x^{f(i)}$ \\
 	$\equiv recurso * \prod_{j=0}^{|eventos|-1} \IfThenElse{eventos[j] = T}{(apuesta_c * pago_c)}{1} * \prod_{j=0}^{|eventos|-1} \IfThenElse{eventos[j] = F}{(apuesta_s * pago_s)}{1}$ \\
 	Si $A=\{0\leq j<|eventos|-1: eventos[j]=T\}$ y $B=\{0\leq j<|eventos|-1: eventos[j]=F\}$ tengo que $A \cap B= \varnothing$ y como en las productorias el predicado del else es 1 (neutro multiplicativo), vale que si las juntamos queda: \\
-	$asegura: res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta_c *pago_c}{apuesta_s * pago_s}\ \square$
+	$asegura: res = recurso * \prod_{j = 0}^{|eventos| - 1} \IfThenElse{eventos[j]}{apuesta_c *pago_c}{apuesta_s * pago_s}\ \blacksquare$
 \end{minipage}
 \subsection*{Demostración $Pre \implicaLuego wp(S1, P_c)$}
 \begin{minipage}[t]{18cm}
@@ -177,7 +177,7 @@ Vamos a demostrar 1 y 2, para ello proponemos lo siguiente:
 1. $Pre \implicaLuego wp(res:=recurso; i:=0, P_c) \stackrel{Axioma\ 2}{\equiv} wp(res:=recurso; wp(i:=0, P_c))$ \\
 2. $wp(i:=0, \{i = 0 \land res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0\}) \stackrel{Axioma\ 1}{\equiv} def(0) \yLuego 0 = 0 \land res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0 \equiv res = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0 \equiv E_1$ \\
 3. $wp(res:=recurso, E_1) \stackrel{Axioma\ 1}{\equiv} def(recurso) \yLuego recurso = recurso \land apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0 \equiv apuesta_c + apuesta_s = 1 \land pago_c > 0 \land pago_s > 0 \land apuesta_c > 0 \land apuesta_s > 0 \land recurso > 0 \equiv E_2$ \\
-Y como $Pre \equiv E_2$ tenemos que $Pre \implica E_2\ \square$
+Y como $Pre \equiv E_2$ tenemos que $Pre \implica E_2\ \blacksquare$
 \end{minipage}
 \subsection*{Demostración $P_c \implicaLuego wp(while..., Q_c)$}
 \begin{minipage}[t]{18cm}
