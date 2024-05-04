@@ -9,7 +9,7 @@
 \fecha{21/4/2024}
 
 \materia{AED}
-\grupo{Grupo IATOGYSWWBKAFJVCRWKR $\equiv$ Scaramouche $\yLuego$ Los Fandango}
+\grupo{SCARAMOUCHE \& LOS FANDANGO}
 
 \integrante{Calo, Agustín}{390/23}{caloagustin4@gmail.com}
 \integrante{Seri, Rafael Nicolás}{362/23}{rafaelnicoseri@gmail.com}
@@ -39,7 +39,7 @@
 	\requiere {|recursos|=|cooperan|}
 	\requiere {todosPositivos(recursos)}
 	\asegura{|res|=|recursos|}
-    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|res| \implicaLuego \IfThenElse{cooperan[i]}{res[i]=totalARepartir(recursos, cooperan)}{res[i]=recursos[i]+totalARepartir(recursos, cooperan)}}}
+    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|res| \implicaLuego res[i]\ =\ \IfThenElse{cooperan[i]}{totalARepartir(recursos, cooperan)}{recursos[i]+totalARepartir(recursos, cooperan)}}}
 \end{proc}
 
 \aux{totalARepartir}{recursos: \TLista{\float}, cooperan: \TLista{\bool}}{\float}{\\ 
@@ -52,7 +52,7 @@
 	\requiere{|cooperan|=|pagos|=|apuestas|=|eventos|=|trayectorias|}
 	\requiere{\paraTodo[unalinea]{i}{\ent}{0\leq i<|pagos| \implicaLuego todosPositivos(pagos[i]) \land todosPositivos(apuestas[i])}}
 	\requiere{\paraTodo[unalinea]{i}{\ent}{0\leq i<|trayectoria| \implicaLuego trayectoria[i][0] > 0}}
-	\requiere{\paraTodo[unalinea]{j}{\ent}{-1<j<|apuestas| \implicaLuego \sum_{i=0}^{|eventos[j]|-1} apuestas[j][i]=1}}
+	\requiere{\paraTodo[unalinea]{j}{\ent}{0\leq j<|apuestas| \implicaLuego \sum_{i=0}^{|eventos[j]|-1} apuestas[j][i]=1}}
 	\asegura{|trayectorias|=|old(trayectorias)|}
 	\asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|old(trayectorias)| \implicaLuego |trayectorias[i]|=|old(trayectorias)[i]|+|eventos[i]|}}
 	\asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|old(trayectorias)| \implicaLuego trayectorias[i][0] = old(trayectorias)[i][0]}}
@@ -84,7 +84,7 @@
    \requiere{0\leq individuo<|cooperan|}
    \asegura{|cooperan|=|old(cooperan)|}
    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq individuo<|cooperan| \land i\neq individuo \implicaLuego cooperan[i]=old(cooperan)[i]}}
-   \asegura{\existe[unalinea]{s,p}{\TLista{\TLista{\float}}}{|s|=|p|=|cooperan| \land \paraTodo[unalinea]{n}{\ent}{0\leq n<|s| \yLuego |s[n]|= |p[n]|=(|eventos|+1) \land s[n][0]= p[n][0]=recursos[n] \land \paraTodo[unalinea]{k}{\ent}{0<k<|s[n]| \implicaLuego s[n][k]= (\IfThenElse{old(cooperan)[k] \lor k=individuo}{0}{\\aporteIndividual(s, apuestas, pagos, eventos, n, k)}) + distribucionCoop(s, apuestas, pagos, eventos, old(cooperan),\\ k, individuo) \land p[n][k]= (\IfThenElse{\neg(old(cooperan)[k]) \lor k=individuo}{aporteIndividual(p, apuestas, pagos, eventos,n, k)\\}{0}) + distribucionNoCoop(p, apuestas, pagos, eventos, old(cooperan), k, individuo)}} \yLuego cooperan[individuo]= p[individuo][|p[individuo]|-1] \leq s[individuo][|s[individuo]|-1]}}
+   \asegura{\existe[unalinea]{s,p}{\TLista{\TLista{\float}}}{|s|=|p|=|cooperan| \land \paraTodo[unalinea]{n}{\ent}{0\leq n<|s| \yLuego |s[n]|= |p[n]|=(|eventos|+1) \land s[n][0]= p[n][0]=recursos[n] \land \paraTodo[unalinea]{k}{\ent}{0<k<|s[n]| \implicaLuego s[n][k]= (\IfThenElse{old(cooperan)[k] \lor k=individuo}{0}{\\aporteIndividual(s, apuestas, pagos, eventos, n, k)}) + distribucionCoop(s, apuestas, pagos, eventos, old(cooperan),\\ k, individuo) \land p[n][k]= (\IfThenElse{\neg(old(cooperan)[k]) \lor k=individuo}{aporteIndividual(p, apuestas, pagos, eventos,n, k)\\}{0}) + distribucionNoCoop(p, apuestas, pagos, eventos, old(cooperan), k, individuo)}} \yLuego cooperan[individuo]= true \leftrightarrow p[individuo][|p[individuo]|-1] \leq s[individuo][|s[individuo]|-1]}}
 \end{proc}
 
 \aux{distribucionCoop}{trayectorias: \TLista{\TLista{\float}}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, eventos: \TLista{\TLista{\nat}}, cooperan: \TLista{\bool}, m: \nat, individuo: \nat}{\float}{\\(\sum_{k=0}^{|cooperan|-1} \IfThenElse{cooperan[k] \lor k=individuo}{aporteIndividual(trayectorias, apuestas,  pagos, eventos, k, m)\\}{0})/|cooperan|}
