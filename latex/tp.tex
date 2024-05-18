@@ -83,7 +83,7 @@
    \requiere{\paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \implicaLuego todosPositivos(recursos) \land todosPositivos(apuestas[i]) \land \\ todosPositivos(pagos[i])}}
    \requiere{0\leq individuo<|cooperan|}
    \asegura{|cooperan|=|old(cooperan)|}
-   \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq individuo<|cooperan| \land i\neq individuo \implicaLuego cooperan[i]=old(cooperan)[i]}}
+   \asegura{cooperan[individuo] = true \land \paraTodo[unalinea]{i}{\ent}{0\leq i<|cooperan| \land i\neq individuo \implicaLuego cooperan[i]=old(cooperan)[i]}}
    \asegura{\existe[unalinea]{s,p}{\TLista{\TLista{\float}}}{|s|=|p|=|cooperan| \land \paraTodo[unalinea]{n}{\ent}{0\leq n<|s| \yLuego |s[n]|= |p[n]|=(|eventos|+1) \land s[n][0]= p[n][0]=recursos[n] \land \paraTodo[unalinea]{k}{\ent}{0<k<|s[n]| \implicaLuego s[n][k]= (\IfThenElse{old(cooperan)[k] \lor k=individuo}{0}{\\aporteIndividual(s, apuestas, pagos, eventos, n, k)}) + distribucionCoop(s, apuestas, pagos, eventos, old(cooperan),\\ k, individuo) \land p[n][k]= (\IfThenElse{\neg(old(cooperan)[k]) \lor k=individuo}{aporteIndividual(p, apuestas, pagos, eventos,n, k)\\}{0}) + distribucionNoCoop(p, apuestas, pagos, eventos, old(cooperan), k, individuo)}} \yLuego cooperan[individuo]= true \leftrightarrow p[individuo][|p[individuo]|-1] \leq s[individuo][|s[individuo]|-1]}}
 \end{proc}
 
@@ -96,16 +96,16 @@
    \requiere{|cooperan|=|recursos|=|apuestas|=|pagos|=|eventos|}
    \requiere{0\leq individuo <|cooperan|}
    \asegura{|apuestas| = |old(apuestas)|}
-   \asegura{\paraTodo[unalinea]{i}{\ent}{-1<i<|apuestas| \implicaLuego |apuestas[i]| = |old(apuestas)[i]|}}
+   \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \implicaLuego |apuestas[i]| = |old(apuestas)[i]|}}
    \asegura{\existe[unalinea]{p, s}{\TLista{\TLista{\float}})(\exists mejorApuesta : \TLista{\float})((\forall posibleApuesta : \TLista{\float}}{ultElem(p, recursos, old(apuestas),\\
     pagos, cooperan, eventos, individuo, mejorApuesta) \geq ultElem(s, recursos, old(apuestas), pagos, cooperan, eventos,\\
-	individuo, posibleApuesta) \implicaLuego apuestas[individuo]=mejorApuesta)}}
+	individuo, posibleApuesta) \implicaLuego apuestas[individuo]=mejorApuesta \land \paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \land i\neq individuo \implicaLuego apuestas[i]=old(apuestas)[i]})}}
    
 \end{proc}
 \aux{ultElem}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{Bool}, eventos: \TLista{\nat}, individuo: \nat, posibleApuesta: \TLista{\nat}}{\float}{\\
 \IfThenElse{trayectoriaPosible(t, recursos, apuestas, pagos, cooperan, eventos, individuo, posibleApuesta)}{t[individuo][|t[individuo]|-1]}{-1}}
 
-\pred{trayectoriaPosible}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{Bool}, eventos: \TLista{\nat}, individuo: \nat, posibleApuesta: \TLista{\nat}}{|posibleApuesta| = |apuestas[individuo]| \land sumElem(posibleApuesta)=1 \land todosPositivos(posibleApuesta) |t|=|cooperan| \land \paraTodo[unalinea]{i}{\ent}{-1<i<|t| \yLuego |t[i]|=(|eventos|+1) \land t[i][0]=recursos[i] \land \paraTodo[unalinea]{j}{\ent}{0\leq j<|t[i]| \implicaLuego t[i][j+1] = (\IfThenElse{cooperan[i]}{0}{aporteIndDiferido(t[i], apuestas[i], pagos[i], eventos[i], i, j, individuo, posibleApuesta)})+ distribucionDiferida (t[i], apuestas[i], pagos[i], eventos[i], cooperan, i, j, individuo, posibleApuesta)}}}
+\pred{trayectoriaPosible}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{Bool}, eventos: \TLista{\nat}, individuo: \nat, posibleApuesta: \TLista{\nat}}{|posibleApuesta| = |apuestas[individuo]| \land sumElem(posibleApuesta)=1 \land todosPositivos(posibleApuesta) |t|=|cooperan| \land \paraTodo[unalinea]{i}{\ent}{0\leq i<|t| \yLuego |t[i]|=(|eventos|+1) \land t[i][0]=recursos[i] \land \paraTodo[unalinea]{j}{\ent}{0\leq j<|t[i]| \implicaLuego t[i][j+1] = (\IfThenElse{cooperan[i]}{0}{aporteIndDiferido(t[i], apuestas[i], pagos[i], eventos[i], i, j, individuo, posibleApuesta)})+ distribucionDiferida (t[i], apuestas[i], pagos[i], eventos[i], cooperan, i, j, individuo, posibleApuesta)}}}
 
 \aux{aporteIndDiferido}{trayectoria: \TLista{\float}, apuestas: \TLista{\float}, pagos: \TLista{\float}, eventos: \TLista{\nat}, k: \nat, m: \nat, individuo: \nat, apuestaInd: \TLista{\float}}{\float}{\\
 \IfThenElse{k=individuo}{trayectorias[m] \cdot apuestaInd[eventos[m]] \cdot pagos[eventos[m]]}{trayectorias[m] \cdot apuestas[eventos[m]] \cdot pagos[eventos[m]]}}
@@ -245,5 +245,5 @@ Entonces $\{I\land v_{0}=fv\}S\{fv<v_{0}\}\ \blacksquare$
 \end{itemize}
 Como $|eventos| \leq i \equiv \neg B$ es una implicación del tipo $P \land Q \implies P$, tenemos $I \land \neg B \implies \neg B\ \blacksquare$
 \subsection*{Demostración $Q_c \implicaLuego Post = asegura \equiv Q_c $}
-\noindent Como la implementación termina con el ciclo y el $Q_c$ equivale al asegura (como lo hemos demostrado anteriormente), por monotonía sabemos que $Pre \implies wp($programa completo, $Post)$, por lo tanto decimos que la especificación es correcta respecto a su implementación.\ $\blacksquare$
+\noindent Como la implementación termina con el ciclo y el $Q_c$ equivale al asegura (como lo hemos demostrado anteriormente), por monotonía sabemos que $Pre \implies wp($programa completo, $Post)$, por lo tanto decimos que la especificación es correcta respecto a su implementación.\  $\blacksquare$
 \end{document}
