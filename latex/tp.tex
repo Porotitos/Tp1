@@ -67,13 +67,29 @@
 \subsection{trayectoriaExtrañaEscalera}
 \begin{proc}{trayectoriaExtrañaEscalera}{\In trayectorias: \TLista{\float}} {\bool}
 	\requiere {|trayectoria|>0}
-	\asegura{res=True \iff |trayectoria| = 1 \lor 
-    (trayectoria[0]>trayectoria[1] \land \neg maximoLocal(trayectoria) \land trayectoria[|trayectoria|-1]<trayectoria[|trayectoria|-2]) \lor
-    (trayectoria[|trayectoria|-1]>trayectoria[|trayectoria|-2] \land \neg maximoLocal(trayectoria) \land trayectoria[0]<trayectoria[1]) \lor
-    \existe[unalinea]{i}{\ent}{0<i<|trayectoria|-1 \yLuego (trayectoria[i]>trayectoria[i+1] \land trayectoria[i]>trayectoria[i-1]) \land \paraTodo[unalinea]{i}{\ent}{0<j<|trayectoria|-1 \yLuego (trayectoria[j]>trayectoria[j+1] \land trayectoria[j]>trayectoria[j-1]) \implicaLuego j=i}}}
+	\asegura{res=true \iff elUnicoEsElMaximo(trayectoria) \lor \\
+	elMaximoEstaEnLosBordes(trayectoria) \lor \\
+	elMaximoEstaEnElInterior(trayectoria)}
 \end{proc}
 
 \pred{maximoLocal}{s: \TLista{\float}}{\existe[unalinea]{i}{\ent}{0<i<|s|-1 \yLuego (s[i]>s[i+1] \land s[i]>s[i-1])}}
+
+\pred{elUnicoEsElMaximo}{t: \TLista{\float}}{|trayectoria| = 1}
+
+\pred{elMaximoEstaEnLosBordes}{t: \TLista{\float}}{elPrimeroEsElMaximo(t) \lor elUltimoEsElMaximo(t)}
+
+\pred{elMaximoEstaEnElInterior}{t: \TLista{\float}}{
+	\existe[unalinea]{i}{\ent}{0<i<|t|-1 \yLuego (t[i]>t[i+1] \land t[i]>t[i-1]) \land 
+	\paraTodo[unalinea]{j}{\ent}{0<j<|t|-1 \yLuego (t[j]>t[j+1] \land t[j]>t[j-1]) \implica j=i}}}
+
+	\pred{elPrimeroEsElMaximo}{t: \TLista{\float}}{t[0]>t[1] \land \neg maximoLocal(t) \land t[|t|-1] < t[|t|-2]}
+	\pred{elUltimoEsElMaximo}{t: \TLista{\float}}{t[|t|-1] > t[|t|-2] \land \neg maximoLocal(t) \land t[0]<t[1]}
+
+
+
+
+
+
 
 
 \subsection{individuoDecideSiCooperarONo}
@@ -84,8 +100,21 @@
    \requiere{0\leq individuo<|cooperan|}
    \asegura{|cooperan|=|old(cooperan)|}
    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|cooperan| \land i\neq individuo \implicaLuego cooperan[i]=old(cooperan)[i]}}
-   \asegura{\existe[unalinea]{s,p}{\TLista{\TLista{\float}}}{|s|=|p|=|cooperan| \land \paraTodo[unalinea]{n}{\ent}{0\leq n<|s| \yLuego |s[n]|= |p[n]|=(|eventos|+1) \land s[n][0]= p[n][0]=recursos[n] \land \paraTodo[unalinea]{k}{\ent}{0<k<|s[n]| \implicaLuego s[n][k]= (\IfThenElse{old(cooperan)[k] \lor k=individuo}{0}{\\aporteIndividual(s, apuestas, pagos, eventos, n, k)}) + distribucionCoop(s, apuestas, pagos, eventos, old(cooperan),\\ k, individuo) \land p[n][k]= (\IfThenElse{\neg(old(cooperan)[k]) \lor k=individuo}{aporteIndividual(p, apuestas, pagos, eventos,n, k)\\}{0}) + distribucionNoCoop(p, apuestas, pagos, eventos, old(cooperan), k, individuo)}} \yLuego cooperan[individuo]= true \leftrightarrow p[individuo][|p[individuo]|-1] \leq s[individuo][|s[individuo]|-1]}}
+   \asegura{\existe[unalinea]{s,p}{\TLista{\TLista{\float}}}{|s|=|p|=|cooperan| \land \\
+   trayectoriaCoop(s, recursos, apuestas, pagos, old(cooperan), eventos, individuo) \land \\
+    trayectoriaNoCoop(p, apuestas, pagos, old(cooperan), eventos, individuo) \implicaLuego \\
+	cooperan[individuo]=p[individuo][|p[individuo]|-1] \leq s[individuo][|s[individuo]|-1]}}
 \end{proc}
+
+\pred{trayectoriaCoop}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{\bool}, eventos: \TLista{\nat}, individuo: \nat}
+{\paraTodo[unalinea]{n}{\ent}{0 \leq n<|t| \yLuego |t[n]|= (|eventos|+1) \land t[n][0]=recursos[n] \land \paraTodo[unalinea]{k}{\ent}{0<k<|t[n]| \implicaLuego t[n][k]= (\IfThenElse{cooperan[k] \lor k=individuo}{0}{aporteIndividual(t, apuestas, pagos, eventos,n, k)}) + 
+\\ distribucionCoop(t, apuestas, pagos, eventos, cooperan, k, individuo)}
+}}
+
+\pred{trayectoriaNoCoop}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{\bool}, eventos: \TLista{\nat}, individuo: \nat}
+{\paraTodo[unalinea]{n}{\ent}{0 \leq n<|t| \yLuego |t[n]|= (|eventos|+1) \land t[n][0]=recursos[n] \land \paraTodo[unalinea]{k}{\ent}{0<k<|t[n]| \implicaLuego t[n][k]= (\IfThenElse{\neg cooperan[k] \lor k=individuo}{aporteIndividual(t, apuestas, pagos, eventos,n, k)}{0}) + 
+\\ distribucionNoCoop(t, apuestas, pagos, eventos, cooperan, k, individuo)}
+}}
 
 \aux{distribucionCoop}{trayectorias: \TLista{\TLista{\float}}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, eventos: \TLista{\TLista{\nat}}, cooperan: \TLista{\bool}, m: \nat, individuo: \nat}{\float}{\\(\sum_{k=0}^{|cooperan|-1} \IfThenElse{cooperan[k] \lor k=individuo}{aporteIndividual(trayectorias, apuestas,  pagos, eventos, k, m)\\}{0})/|cooperan|}
 \aux{distribucionNoCoop}{trayectorias: \TLista{\TLista{\float}}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, eventos: \TLista{\TLista{\nat}}, cooperan: \TLista{\bool}, m: \nat, individuo: \nat}{\float}{\\(\sum_{k=0}^{|cooperan|-1} \IfThenElse{cooperan[k] \land k \neq individuo}{aporteIndividual(trayectorias, apuestas,  pagos, eventos, k, m)\\}{0})/|cooperan|}
@@ -97,9 +126,10 @@
    \requiere{0\leq individuo <|cooperan|}
    \asegura{|apuestas| = |old(apuestas)|}
    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \implicaLuego |apuestas[i]| = |old(apuestas)[i]|}}
-   \asegura{\existe[unalinea]{p, s}{\TLista{\TLista{\float}})(\exists mejorApuesta : \TLista{\float})((\forall posibleApuesta : \TLista{\float}}{ultElem(p, recursos, old(apuestas),\\
-    pagos, cooperan, eventos, individuo, mejorApuesta) \geq ultElem(s, recursos, old(apuestas), pagos, cooperan, eventos,\\
-	individuo, posibleApuesta) \implicaLuego apuestas[individuo]=mejorApuesta \land \paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \land i\neq individuo \implicaLuego apuestas[i]=old(apuestas)[i]})}}
+   \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \land i \neq individuo \implicaLuego apuestas[i] = old(apuestas)[i]}}
+   \asegura{\existe[unalinea]{p}{\TLista{\TLista{\float}}}{(\forall posibleApuesta : \TLista{\float})((\exists s : \TLista{\TLista{\float}})(ultElem(p, recursos, old(apuestas),
+   pagos, cooperan, eventos, individuo, apuestas[individuo]) \geq ultElem(s, recursos, old(apuestas), pagos, cooperan, eventos,individuo, posibleApuesta)))
+   }}
    
 \end{proc}
 \aux{ultElem}{t: \TLista{\TLista{\float}}, recursos: \TLista{\float}, apuestas: \TLista{\TLista{\float}}, pagos: \TLista{\TLista{\float}}, cooperan: \TLista{Bool}, eventos: \TLista{\nat}, individuo: \nat, posibleApuesta: \TLista{\nat}}{\float}{\\
