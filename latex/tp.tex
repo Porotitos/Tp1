@@ -127,8 +127,9 @@
    \asegura{|apuestas| = |old(apuestas)|}
    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \implicaLuego |apuestas[i]| = |old(apuestas)[i]|}}
    \asegura{\paraTodo[unalinea]{i}{\ent}{0\leq i<|apuestas| \land i \neq individuo \implicaLuego apuestas[i] = old(apuestas)[i]}}
-   \asegura{\existe[unalinea]{p}{\TLista{\TLista{\float}}}{(\forall posibleApuesta : \TLista{\float})((\exists s : \TLista{\TLista{\float}})(ultElem(p, recursos, old(apuestas),
-   pagos, cooperan, eventos, individuo, apuestas[individuo]) \geq ultElem(s, recursos, old(apuestas), pagos, cooperan, eventos,individuo, posibleApuesta)))
+   \asegura{\existe[unalinea]{p}{\TLista{\TLista{\float}}}{(\forall posibleApuesta : \TLista{\float})((\exists s : \TLista{\TLista{\float}})(ultElem(p, recursos, old(apuestas), \\
+   pagos, cooperan, eventos, individuo, apuestas[individuo]) \geq ultElem(s, recursos, old(apuestas), pagos, cooperan, \\
+   eventos,individuo, posibleApuesta)))
    }}
    
 \end{proc}
